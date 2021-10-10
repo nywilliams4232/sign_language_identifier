@@ -1,16 +1,18 @@
-# This is a sample Python script.
+import cv2
+from hand_track import handTrack
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+cam = cv2.VideoCapture(0)
 
+hands = handTrack()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+while True:
+    success, img = cam.read()
+    hands.findHands(img)
+    #print(hands.findPosition(img))
 
+    cv2.imshow("Camera", img)
+    if (cv2.waitKey(25) & 0xFF == ord('q')):
+        break
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+cam.release()
+cv2.destroyAllWindows()
