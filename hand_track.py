@@ -1,7 +1,6 @@
 import mediapipe as mp
 import cv2
 
-
 class handTrack():
 
     def __init__(self, mode=False, max_hands=2, detectionCon=0.5, trackCon=0.5):
@@ -13,6 +12,7 @@ class handTrack():
         self.hands = mp.solutions.hands.Hands(self.mode, self.max_hands,
                                               self.detectionCon, self.trackCon)
         self.mpDraw = mp.solutions.drawing_utils
+        self.num_visible_hands = 0
 
     def findHands(self, img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -20,15 +20,18 @@ class handTrack():
 
         # If hand is seen then this will != None
         if self.results.multi_hand_landmarks:
+            self.num_visible_hands = len(self.results.multi_hand_landmarks)
             for handLms in self.results.multi_hand_landmarks:
                 if (draw):
                     self.mpDraw.draw_landmarks(img, handLms, mp.solutions.hands.HAND_CONNECTIONS)
-                    #creates bounding box for one hand
-                    lm = self.findPosition(img)
-                    x_min, y_min, x_max, y_max = self.boundingBox(lm, 30)
-                    img = cv2.rectangle(img, (x_min, y_min), (x_max, y_max), (255, 0, 0), 3)
+                    for hand in range(self.num_visible_hands):
+                        #creates bounding box for one hand
+                        lm = self.findPosition(img, hand)
+                        x_min, y_min, x_max, y_max = self.boundingBox(lm, 30)
+                        img = cv2.rectangle(img, (x_min, y_min), (x_max, y_max), (255, 0, 0), 3)
 
         return img
+
     def boundingBox(self, handLM, padding=0):
         x_max, y_max = 0, 0
         x_min, y_min = 1000000000, 1000000000
