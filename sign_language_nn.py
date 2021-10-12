@@ -34,7 +34,14 @@ class SLNN:
         self.model.fit(X, y, batch_size=batch_size, validation_split=validation_split, epochs=epochs)
 
     def predict(self, X):
-        return argmax(self.model.predict(X)) #Returns the highest possible solution
+        # Returns the highest possible solution
+        pred = argmax(self.model.predict(X))
+        #no J and Z
+        characters = ["A", "B", "C", "D", "E", "F", "G",
+                      "H", "I", "K", "L", "M", "N", "O",
+                      "P", "Q", "R", "S", "T", "U", "V",
+                      "W", "X", "Y"]
+        return characters[pred]
 
     def save_weights(self, file_path="weights_slnn.w"):
         self.model.save_weights(file_path)
