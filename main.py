@@ -1,8 +1,18 @@
 import cv2
 from hand_track import handTrack
+from data_loader import loadData
 from sign_language_nn import SLNN
 
 cam = cv2.VideoCapture(0)
+
+#example of data loading
+labels, data = loadData("sign_mnist_test.csv")
+cv2.namedWindow("Image")
+for i in range(10):
+    im = cv2.resize(data[i], (600,600))
+    cv2.imshow("Image", im)
+    cv2.waitKey()
+
 
 hands = handTrack()
 #model = SLNN()
