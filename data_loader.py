@@ -8,6 +8,6 @@ def loadData(fileName):
     np_labels = labels.to_numpy()
     np_images = images.to_numpy()
     #normalize to 0-1.0
-    np_images_processed = np.reshape(np_images, (-1, 28, 28))/255.0
+    np_images_processed = np.reshape(np_images, (-1, 28, 28, 1))/255.0
     return np_labels, np_images_processed
 

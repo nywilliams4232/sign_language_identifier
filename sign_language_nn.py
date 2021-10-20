@@ -6,7 +6,7 @@ class SLNN:
     def __init__(self):
         self.model = Sequential([
             #1 Convolution One (captures lower level features)
-            Conv2D(64, kernel_size=(3,3), input_shape=(28,28, 1)), #collects relevent info
+            Conv2D(64, kernel_size=(3,3), input_shape=(28,28,1)), #collects relevent info
             Activation('relu'),
             MaxPool2D(pool_size=(2,2)), #Gathers together all the maximum values in 'pools' to reduce the number of dimensions
 
@@ -23,10 +23,10 @@ class SLNN:
             Dense(128, activation='relu'),
 
             #Output layer
-            Dense(24, activation='softmax')
+            Dense(26, activation='softmax')
         ])
 
-        self.model.compile(loss="categorical_crossentropy",
+        self.model.compile(loss="sparse_categorical_crossentropy",
                            optimizer='adam',
                            metrics=['mean_squared_error', 'accuracy'])
 
@@ -35,13 +35,8 @@ class SLNN:
 
     def predict(self, X):
         # Returns the highest possible solution
-        pred = argmax(self.model.predict(X))
-        #no J and Z
-        characters = ["A", "B", "C", "D", "E", "F", "G",
-                      "H", "I", "K", "L", "M", "N", "O",
-                      "P", "Q", "R", "S", "T", "U", "V",
-                      "W", "X", "Y"]
-        return characters[pred]
+        return self.model.predict([X])
+
 
     def save_weights(self, file_path="weights_slnn.w"):
         self.model.save_weights(file_path)
