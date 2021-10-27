@@ -47,7 +47,10 @@ class handTrack():
             if (y > y_max):
                 y_max = y
         #make sure we don't have negative outputs
-        a = np.array([x_min-padding, y_min-padding, x_max+padding, y_max+padding])
+        x_center = int((x_min + x_max) / 2)
+        y_center = int((y_min + y_max) / 2)
+        max_diff = int(max(x_max - x_min, y_max - y_min) / 2)
+        a = np.array([x_center-max_diff-padding, y_center-max_diff-padding, x_center+max_diff+padding, y_center+max_diff+padding])
         return np.where(a < 0, 0, a)
 
     def findPosition(self, img, handNum=0):
