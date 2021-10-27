@@ -1,5 +1,6 @@
 import mediapipe as mp
 import cv2
+import numpy as np
 
 class handTrack():
 
@@ -45,8 +46,9 @@ class handTrack():
                 y_min = y
             if (y > y_max):
                 y_max = y
-
-        return [x_min-padding, y_min-padding, x_max+padding, y_max+padding]
+        #make sure we don't have negative outputs
+        a = np.array([x_min-padding, y_min-padding, x_max+padding, y_max+padding])
+        return np.where(a < 0, 0, a)
 
     def findPosition(self, img, handNum=0):
         lmList = []
