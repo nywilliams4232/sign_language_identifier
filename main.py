@@ -3,6 +3,7 @@ import numpy as np
 from hand_track import handTrack
 from data_loader import loadData
 from sign_language_nn import SLNN
+from tensorflow.math import confusion_matrix
 
 characters = ["A", "B", "C", "D", "E", "F", "G",
                   "H", "I","J", "K", "L", "M", "N", "O",
@@ -14,9 +15,11 @@ def train_model():
     y_train, X_train = loadData("sign_mnist_train.csv")
 
     model = SLNN()
-    model.fit(X_train, y_train, epochs=3)
+    model.fit(X_train, y_train, epochs=10)
 
     model.save_weights()
+
+    return model
 
 def test_model():
     y_test, X_test = loadData("sign_mnist_test.csv")
@@ -24,7 +27,7 @@ def test_model():
     model = SLNN()
     model.load_weights()
 
-    for i in range(10):
+    for i in range(100):
         im = cv2.resize(X_test[i], (600, 600))
         cv2.imshow("Image", im)
 
@@ -34,11 +37,23 @@ def test_model():
         cv2.waitKey()
 
 def main():
+    #train_model()
+    #test_model()
+    y_train, X_train = loadData("sign_mnist_train.csv")
+    y_test, X_test = loadData("sign_mnist_test.csv")
+    print(y_train.shape)
     cam = cv2.VideoCapture(0)
-
-    hands = handTrack()
     model = SLNN()
     model.load_weights()
+    hands = handTrack()
+
+    print(model.model.summary())
+    #model.fit(X_train, y_train, epochs=20, validation_data=(X_test, y_test))
+    #model.save_weights()
+    y_predict = model.predict(X_test)
+
+
+    print(confusion_matrix(y_test, np.argmax(y_predict, axis=1), num_classes=26, weights=None,name=None))
 
     LEFT_HAND = 0
     RIGHT_HAND = 1
@@ -69,7 +84,7 @@ def main():
             hand_img = cv2.resize(hand_img, (28,28))
 
             hand_img = np.array(hand_img)/255.0
-            cv2.imshow("Image", hand_img)
+            cv2.imshow("Image", cv2.resize(hand_img, (600, 600)))
             hand_img = np.reshape(hand_img, (-1, 28, 28, 1))
 
             predict_arr = model.predict(hand_img)[0]
