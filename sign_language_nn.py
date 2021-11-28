@@ -1,8 +1,8 @@
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, MaxPool2D, Activation, Dropout
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, MaxPool2D, Activation, Dropout, Input
 from tensorflow.keras.models import Sequential
 from numpy import argmax
 
-class SLNN:
+class SLCNN:
     def __init__(self):
         self.model = Sequential([
             #1 Convolution One (captures lower level features)
@@ -11,16 +11,16 @@ class SLNN:
             MaxPool2D(pool_size=(2,2), strides=(2, 2)), #Gathers together all the maximum values in 'pools' to reduce the number of dimensions
 
             #2 Convlution layer Two (captures higher level features)
-            Conv2D(32, kernel_size=(3, 3)),
+            Conv2D(64, kernel_size=(2, 2)),
             Activation('relu'),
             MaxPool2D(pool_size=(2, 2), strides=(2, 2)),
 
             Flatten(), #Basically turns final convolved image into 1D vector
 
             #2 hidden layers
-            Dense(128, activation='relu'),
+            Dense(64, activation='tanh'),
             Dropout(.2),
-            Dense(64, activation='relu'),
+            Dense(64, activation='tanh'),
             Dropout(.2),
 
             #Output layer

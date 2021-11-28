@@ -2,20 +2,26 @@ import cv2
 import numpy as np
 from hand_track import handTrack
 from data_loader import loadData
-from sign_language_nn import SLNN
+from sign_language_nn import SLCNN
 from tensorflow.math import confusion_matrix
 
 characters = ["A", "B", "C", "D", "E", "F", "G",
                   "H", "I","J", "K", "L", "M", "N", "O",
                   "P", "Q", "R", "S", "T", "U", "V",
                   "W", "X", "Y", "Z"]
+#def create_data_set():
+
 
 def train_model():
     # example of data loading
     y_train, X_train = loadData("sign_mnist_train.csv")
 
-    model = SLNN()
-    model.fit(X_train, y_train, epochs=10)
+    model = SLCNN()
+    for i in range(10):
+        guass = np.random.normal(0, 0.1, (28, 28, 1))
+        x_train_noise = X_train + guass
+        model.fit(x_train_noise, y_train, epochs=1, batch_size=100)
+    #model.fit(X_test, y_test, epochs=2, batch_size=100)
 
     model.save_weights()
 
@@ -24,7 +30,7 @@ def train_model():
 def test_model():
     y_test, X_test = loadData("sign_mnist_test.csv")
 
-    model = SLNN()
+    model = SLCNN()
     model.load_weights()
 
     for i in range(100):
@@ -43,17 +49,17 @@ def main():
     y_test, X_test = loadData("sign_mnist_test.csv")
     print(y_train.shape)
     cam = cv2.VideoCapture(0)
-    model = SLNN()
+    model = SLCNN()
     model.load_weights()
     hands = handTrack()
 
-    print(model.model.summary())
+    #print(model.model.summary())
     #model.fit(X_train, y_train, epochs=20, validation_data=(X_test, y_test))
     #model.save_weights()
-    y_predict = model.predict(X_test)
+    #y_predict = model.predict(X_test)
 
 
-    print(confusion_matrix(y_test, np.argmax(y_predict, axis=1), num_classes=26, weights=None,name=None))
+    #print(confusion_matrix(y_test, np.argmax(y_predict, axis=1), num_classes=26, weights=None,name=None))
 
     LEFT_HAND = 0
     RIGHT_HAND = 1
@@ -104,10 +110,7 @@ def main():
                 img = cv2.putText(img, str(val[0]) + f' {val[1]:05f}', (hand_img_dims[2], hand_img_dims[3] - 100 + i*20), color=(0,255,0), fontFace = cv2.FONT_HERSHEY_PLAIN, fontScale = 1)
 
 
-
         cv2.imshow("Camera", img)
-
-
 
         if (cv2.waitKey(25) & 0xFF == ord('q')):
             break
@@ -115,4 +118,7 @@ def main():
     cam.release()
     cv2.destroyAllWindows()
 
+
+#train_model()
 main()
+#test_model()
