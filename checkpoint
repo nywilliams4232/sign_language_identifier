@@ -1,2 +1,2 @@
-model_checkpoint_path: "weights_slnn.w"
-all_model_checkpoint_paths: "weights_slnn.w"
+model_checkpoint_path: "weights_slnn4.w"
+all_model_checkpoint_paths: "weights_slnn4.w"

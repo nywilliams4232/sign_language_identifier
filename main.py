@@ -16,14 +16,19 @@ def train_model():
     # example of data loading
     y_train, X_train = loadData("sign_mnist_train.csv")
 
+    print(X_train[0])
+
     model = SLCNN()
     for i in range(10):
-        guass = np.random.normal(0, 0.1, (28, 28, 1))
+        guass = np.random.normal(0, 0.15, (28, 28, 1))
         x_train_noise = X_train + guass
-        model.fit(x_train_noise, y_train, epochs=1, batch_size=100)
+        x_train_invert = 1 - x_train_noise
+        x_train_final = np.append(x_train_noise, x_train_invert).reshape(-1, 28,28,1)
+        y_train_final = np.append(y_train, y_train)
+        model.fit(x_train_final, y_train_final, epochs=1, batch_size=100)
     #model.fit(X_test, y_test, epochs=2, batch_size=100)
 
-    model.save_weights()
+    model.save_weights("weights_slnn4.w")
 
     return model
 
@@ -50,7 +55,7 @@ def main():
     print(y_train.shape)
     cam = cv2.VideoCapture(0)
     model = SLCNN()
-    model.load_weights()
+    model.load_weights("weights_slnn4.w")
     hands = handTrack()
 
     #print(model.model.summary())
