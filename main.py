@@ -52,8 +52,14 @@ def main():
     #test_model()
     y_train, X_train = loadData("sign_mnist_train.csv")
     y_test, X_test = loadData("sign_mnist_test.csv")
-    print(y_train.shape)
+
     cam = cv2.VideoCapture(0)
+
+    frame_width = int(cam.get(3))
+    frame_height = int(cam.get(4))
+    out = cv2.VideoWriter('sign_language.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10,
+                          (frame_width, frame_height))
+
     model = SLCNN()
     model.load_weights("weights_slnn4.w")
     hands = handTrack()
@@ -116,6 +122,7 @@ def main():
 
 
         cv2.imshow("Camera", img)
+        out.write(img)
 
         if (cv2.waitKey(25) & 0xFF == ord('q')):
             break
